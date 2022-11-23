@@ -2,9 +2,12 @@
 
 If you have your 3D printer connected to a [Fiberpunk Node](https://fiber-punk.com/), you may find this tool useful. It will monitor a particular folder on your computer for .gcode files and once found will auto-upload this to your Node/Printer and start the print.
 
+## Prerequisites
+[NodeJS](https://nodejs.org/en/download/) needs to be installed.
+
 ## Installation
 
-Use the package manager npm to install all dependencies.
+Download the ZIP file and unpack to your computer. Open a terminal inside that folder. Use the package manager npm to install all dependencies automatically.
 
 ```bash
 npm install
@@ -14,7 +17,7 @@ npm install
 Start the monitoring tool with the 'ip' switch, specifying the IP of your node. If needed, specify the port with the 'p' switch, otherwise it uses the default of 88.
 
 ```bash
-node autouploader.js -ip 192.168.1.2
+> node autouploader.js -ip 192.168.1.2
 
 [Monitor] info: Using default port 88
 [Monitor] info: Cleaning Server files
