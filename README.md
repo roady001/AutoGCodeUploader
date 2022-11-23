@@ -14,7 +14,7 @@ npm install
 Start the monitoring tool with the 'ip' switch, specifying the IP of your node. If needed, specify the port with the 'p' switch, otherwise it uses the default of 88.
 
 ```bash
-node autouploader.js -ip 192.168.50.53
+node autouploader.js -ip 192.168.1.2
 
 [Monitor] info: Using default port 88
 [Monitor] info: Cleaning Server files
@@ -36,6 +36,15 @@ The script will by default create a folder called '3D print dropfolder' on your 
 * **_finished** (contains files that have both been printed as well as cleaned/removed from your 3D printer after 24 hours or defined through the -hoursBeforeRemoval switch)
 * **_logs** (contains logs, will be auto-cycled)
 * **_processed** (contains files that have been send to the printer, but not yet have been auto-deleted from the printer to clean up and free space)
+
+## Run as a service
+
+In case you want to run this script as a Windows Service, you can use the [NSSM tool](http://nssm.cc/download/?page=download). Change the paths in the command below to match your system.
+
+```bash
+.\nssm.exe install autoUploadGcode-service "C:\Program Files\nodejs\node.exe" "C:\Your GIT Repo Folder\AutoGCodeUploader\autouploader.js -ip 192.168.1.2"
+```
+Fill in the proper Path, Startup Directory and Arguments like you would do for directly running the script. You may want to explicitly specify the watchFolder, because Windows Services run under the System Account. Or run the service under your own user credentials.
 
 
 ## Contributing
