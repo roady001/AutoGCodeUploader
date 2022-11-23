@@ -14,7 +14,7 @@ npm install
 Start the monitoring tool with the 'ip' switch, specifying the IP of your node. If needed, specify the port with the 'p' switch, otherwise it uses the default of 88.
 
 ```bash
-node index.js -ip 192.168.50.53
+node autouploader.js -ip 192.168.50.53
 
 [Monitor] info: Using default port 88
 [Monitor] info: Cleaning Server files
