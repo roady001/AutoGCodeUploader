@@ -62,7 +62,7 @@ var watcher = chokidar.watch(watchFolder, {
 
 
 watcher
-  .on('add', function(path) {logInfo('Found file' + path);printFile(path);})
+  .on('add', function(path) {logInfo('Found file ' + path);printFile(path);})
 
 function getArgument(arg){
   for (var i = 0;i < myArgs.length - 1; i = i + 2){
@@ -75,11 +75,10 @@ function getArgument(arg){
 }
 
 function retry(path){
-  logInfo('Re-trying after 20 seconds for ', + path);
+  logInfo('Re-trying after 20 seconds for ' + path);
   setTimeout(() => {
     printFile(path);
   }, (15000));
-
 }
 
 function printFile(path){
@@ -90,31 +89,31 @@ function printFile(path){
       return;
     }
     logInfo('Attempt to print file ' + fileName);
-    try{
-      mountSDCard(function(){
-        uploadFile(path, function(){
-            startPrint(fileName, function(){
-                cleanUp(path, readyFolder);
-            })
-        });
-    });
-    } catch(err){
-      retry(path);
-    }
+    mountSDCard(function(){
+      uploadFile(path, function(){
+          startPrint(fileName, function(){
+              cleanUp(path, readyFolder);
+          }, function(){retry(path);})
+      }, function(){retry(path);});
+    }, function(){retry(path);});
+   
     
 }
 
-function cleanUp(path, targetFolder){
+function cleanUp(path, targetFolder, onError){
     var oldPath = path;
     var newPath = pathO.join(targetFolder, pathO.basename(path));
     logInfo('Moving file to ' + newPath);
 
     fs.rename(oldPath, newPath, function (err) {
-      if (err) throw err
+      if (err) {
+        logError("Error: " + err.message);
+        onError(err);
+      }
     })
 }
 
-function startPrint(fileName, fnOnready){
+function startPrint(fileName, fnOnready, onError){
   logInfo('Asking printer to start ' + fileName);
     http.get(url + '/print?filename=' + convertToShortName(fileName), (resp) => {
         let data = '';
@@ -131,12 +130,12 @@ function startPrint(fileName, fnOnready){
         });
       
       }).on("error", (err) => {
-        logError("Error: " + err.message);
-        throw '';
+          logError("Error: " + err.message);
+          onError(err);
       });
 }
 
- function uploadFile(path, fnOnready){
+ function uploadFile(path, fnOnready, onError){
   logInfo('uploading ' +pathO.basename(path));
     var FormData = require('form-data');
     var fs = require('fs');
@@ -150,8 +149,8 @@ function startPrint(fileName, fnOnready){
             }
         res.resume();
         } catch(err){
-            logError('Could not reach API; Printer offline?');
-            throw '';
+          logError("Could not reach API; Printer offline?");
+          onError(err);
         }
     });
     
@@ -235,7 +234,7 @@ function startPrint(fileName, fnOnready){
     return full_name;
   }
   
- function mountSDCard(fnOnready){
+ function mountSDCard(fnOnready, onError){
   logInfo('Mounting SD card...');
     http.get(url + '/operate?op=GETSD', (resp) => {
         // The whole response has been received. Print out the result.
@@ -248,8 +247,8 @@ function startPrint(fileName, fnOnready){
         });
       
       }).on("error", (err) => {
-        logInfo("Error: " + err.message);
-        throw '';
+        logError("Could not reach API; Printer offline?");
+        onError(err);
       });
  }
 
