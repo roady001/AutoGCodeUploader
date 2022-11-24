@@ -180,7 +180,7 @@ function startPrint(fileName, fnOnready, onError){
  function init(){
     let thisIP = getArgument('ip');
     let thisPort = getArgument('p');
-    let thisWatchFolder = getArgument('watchFolder');
+    let thisWatchFolder = getArgument('watchFolder') || getArgument('watchfolder');
     let thisHoursBeforeRemoval = getArgument('hoursBeforeRemoval');
     if (getArgument('h') != null || getArgument('-help') != null){
       console.log('Use switches -ip and -p to specify the server location.');
