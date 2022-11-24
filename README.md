@@ -36,9 +36,8 @@ Start the monitoring tool with the 'ip' switch, specifying the IP of your node. 
 The script will by default create a folder called '3D print dropfolder' on your Desktop, unless you specify a different location through the switch -watchFolder. Dropping .gcode files into this folder will automatically start the file printing on your 3D printer. Inside this folder, several other folders are created:
 * -the root folder itself- (this is where you drop .gcode files into for auto-printing)
 * **_error** (contains files that produced an error)
-* **_finished** (contains files that have both been printed as well as cleaned/removed from your 3D printer after 24 hours or defined through the -hoursBeforeRemoval switch)
 * **_logs** (contains logs, will be auto-cycled)
-* **_processed** (contains files that have been send to the printer, but not yet have been auto-deleted from the printer to clean up and free space)
+* **_processed** (contains files that have been send to the printer)
 
 ## Run as a service
 
