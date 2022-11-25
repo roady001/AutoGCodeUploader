@@ -1,4 +1,5 @@
 var url = '';
+const myArgs = process.argv.slice(2);
 const watchFolderName = '3D print dropfolder';
 const userPaths = require('platform-folders');
 const winston = require('winston');
@@ -9,12 +10,15 @@ const http = require('http');
 const pathO = require('path');
 var hoursBeforeRemoving = 48;
 var watchFolder = pathO.join(desktopDir, watchFolderName);
-//var finishedFolder = pathO.join(desktopDir, watchFolderName,'_finished');
-var readyFolder = pathO.join(desktopDir, watchFolderName,'_processed');
-var errorFolder = pathO.join(desktopDir, watchFolderName,'_error');
-var logsFolder = pathO.join(desktopDir, watchFolderName,'_logs');
-const myArgs = process.argv.slice(2);
+let thisWatchFolder = getArgument('watchFolder') || getArgument('watchfolder');
+if (thisWatchFolder != null){
+  watchFolder = thisWatchFolder;
+} 
 
+var readyFolder = pathO.join(watchFolder,'_processed');
+var errorFolder = pathO.join(watchFolder,'_error');
+var logsFolder = pathO.join(watchFolder,'_logs');
+createDir(logsFolder);
 
 const myFormat = winston.format.printf(({ level, message, label, timestamp }) => {
   return `${timestamp} [${label}] ${level}: ${message}`;
@@ -59,6 +63,10 @@ var watcher = chokidar.watch(watchFolder, {
 
 watcher
   .on('add', function(path) {logInfo('Found file ' + path);printFile(path);})
+
+
+
+//////////////////////////// Functions /////////////////////////////////
 
 function pad(num, size) {
     var s = "000000000" + num;
@@ -194,9 +202,6 @@ function startPrint(uploadedFilename, fnOnready, onError){
       carryOnFn();
     }
 
-    
-    
-    
  }
 
 
@@ -224,7 +229,6 @@ function startPrint(uploadedFilename, fnOnready, onError){
  function init(){
     let thisIP = getArgument('ip');
     let thisPort = getArgument('p');
-    let thisWatchFolder = getArgument('watchFolder') || getArgument('watchfolder');
     let thisHoursBeforeRemoval = getArgument('hoursBeforeRemoval');
     if (getArgument('h') != null || getArgument('-help') != null){
       console.log('Use switches -ip and -p to specify the server location.');
@@ -248,7 +252,6 @@ function startPrint(uploadedFilename, fnOnready, onError){
        //finishedFolder = pathO.join(thisWatchFolder,'_finished');
        readyFolder = pathO.join(thisWatchFolder,'_processed');
        errorFolder = pathO.join(thisWatchFolder,'_error');
-       logsFolder = pathO.join(thisWatchFolder,'_logs');
     }
 
 
@@ -256,7 +259,6 @@ function startPrint(uploadedFilename, fnOnready, onError){
     createDir(watchFolder);
     createDir(readyFolder);
     createDir(errorFolder);
-    createDir(logsFolder);
     //createDir(finishedFolder);
     setInterval(() => {
       cleanUpServerFiles();
